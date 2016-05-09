@@ -1,16 +1,18 @@
 package com.neerajsingh.popularmovies.Data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by neeraj.singh on 28/04/16.
  */
-public class Movie implements Serializable {
+public class Movie implements Parcelable {
     @SerializedName("poster_path")
     @Expose
     private String posterPath;
@@ -53,6 +55,28 @@ public class Movie implements Serializable {
     @SerializedName("vote_average")
     @Expose
     private Double voteAverage;
+
+    protected Movie(Parcel in) {
+        posterPath = in.readString();
+        overview = in.readString();
+        releaseDate = in.readString();
+        originalTitle = in.readString();
+        originalLanguage = in.readString();
+        title = in.readString();
+        backdropPath = in.readString();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public String getPosterPath() {
         return posterPath;
@@ -164,5 +188,21 @@ public class Movie implements Serializable {
 
     public void setVoteAverage(Double voteAverage) {
         this.voteAverage = voteAverage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(posterPath);
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+        dest.writeString(originalTitle);
+        dest.writeString(originalLanguage);
+        dest.writeString(title);
+        dest.writeString(backdropPath);
     }
 }

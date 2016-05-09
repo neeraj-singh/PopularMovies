@@ -36,7 +36,7 @@ public class DetailActivity extends AppCompatActivity {
         Bundle extra = getIntent().getExtras();
 
         if(extra !=null && extra.containsKey(MOVIE_DETAIL) ){
-            movie = (Movie)extra.getSerializable(MOVIE_DETAIL);
+            movie = extra.getParcelable(MOVIE_DETAIL);
         }
         String title = movie.getTitle();
         try {
@@ -68,6 +68,8 @@ public class DetailActivity extends AppCompatActivity {
 
         Picasso.with(this).load(
                 PopularMoviesApplication.BASE_IMAGE_URL+PopularMoviesApplication.POSTER_SIZE+"/"+movie.getPosterPath())
+                .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_error)
                 .into((ImageView) findViewById(R.id.imageView));
 
     }
