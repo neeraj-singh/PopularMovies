@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +24,13 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
+    public static final String ISPOPULAR = "ISPOPULAR";
+
+    protected final int SPAN_2 = 2;
+    protected final int SPAN_3 = 3;
+
+    protected final String Loader_Message = "Please wait..";
+
     RecyclerView recyclerView;
     List<Movie> movieList;
     ProgressDialog progressDialog;
@@ -34,32 +40,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null){
+            isPopular =  savedInstanceState.getBoolean(ISPOPULAR);
+        }
         originalView();
     }
 
-    private void originalView() {
+    private void originalView( ) {
         setContentView(R.layout.activity_main);
-
         recyclerView = (RecyclerView) findViewById(R.id.root_view);
-        layoutManager = new GridLayoutManager(this,2);
+        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = new GridLayoutManager(this, SPAN_2);
+        }else if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            layoutManager = new GridLayoutManager(this, SPAN_3);
+        }
         recyclerView.setLayoutManager(layoutManager);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         getMovies(getMoviesHandler(isPopular));
     }
 
     private void getMovies(Call<MovieList> movieListCall) {
-        progressDialog = ProgressDialog.show(this,null,"Please wait..");
+        progressDialog = ProgressDialog.show(this,null,Loader_Message);
         progressDialog.setCancelable(true);
         movieListCall.enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                Log.e("Response recieved",response.isSuccessful()+" "+response.body());
+                progressDialog.dismiss();
                 if(response!=null && response.isSuccessful()){
-                    progressDialog.dismiss();
                     movieList = response.body().getPopularMovies();
                     moviesAdapter = new MoviesAdapter(movieList);
                     recyclerView.setAdapter(moviesAdapter);
@@ -69,9 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<MovieList> call, Throwable t) {
-                Log.e("Response recieved","call failed");
                 progressDialog.dismiss();
-                Toast.makeText(MainActivity.this,"Network call faield",Toast.LENGTH_LONG).show();
                 setContentView(R.layout.no_net);
             }
         });
@@ -117,18 +121,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void retryNetworkCall(View view){
         originalView();
-        getMovies(getMoviesHandler(isPopular));
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        layoutManager = new GridLayoutManager(this,3);
-        recyclerView.setLayoutManager(layoutManager);
-        if(moviesAdapter!=null) {
-            recyclerView.setAdapter(moviesAdapter);
-            moviesAdapter.notifyDataSetChanged();
-        }
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(ISPOPULAR,isPopular);
+        super.onSaveInstanceState(outState);
     }
-
 }

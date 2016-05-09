@@ -24,6 +24,7 @@ import java.util.Locale;
 public class DetailActivity extends AppCompatActivity {
 
     public static final String MOVIE_DETAIL = "MOVIE_DETAIL";
+    public static final int TIME_ADJUSTER = 1900;
     Movie movie;
 
     @Override
@@ -75,7 +76,7 @@ public class DetailActivity extends AppCompatActivity {
         String releaseDate = movie.getReleaseDate();
         DateFormat format = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
         Date date = format.parse(releaseDate);
-        String name = movie.getOriginalTitle()+"("+(date.getYear()+1900)+")";
+        String name = movie.getOriginalTitle()+" ("+(date.getYear()+ TIME_ADJUSTER)+")";
 
         return name;
     }
