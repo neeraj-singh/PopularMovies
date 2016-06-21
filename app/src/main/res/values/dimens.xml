@@ -5,6 +5,7 @@
     <dimen name="left_margin">16dp</dimen>
     <dimen name="right_margin">16dp</dimen>
     <dimen name="text_big">18sp</dimen>
+    <dimen name="text_large">22sp</dimen>
     <dimen name="text_regular">14sp</dimen>
     <dimen name="top_margin">4dp</dimen>
     <dimen name="top_margin_8">4dp</dimen>

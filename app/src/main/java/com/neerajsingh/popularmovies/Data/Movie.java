@@ -30,7 +30,7 @@ public class Movie implements Parcelable {
     private List<Integer> genreIds = new ArrayList<Integer>();
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("original_title")
     @Expose
     private String originalTitle;
@@ -60,10 +60,16 @@ public class Movie implements Parcelable {
         posterPath = in.readString();
         overview = in.readString();
         releaseDate = in.readString();
+        id = in.readInt();
         originalTitle = in.readString();
         originalLanguage = in.readString();
         title = in.readString();
         backdropPath = in.readString();
+        popularity = in.readDouble();
+        voteCount = in.readInt();
+        voteAverage = in.readDouble();
+        genreIds = in.readArrayList(Integer.class.getClassLoader());
+        video = in.readByte() != 0;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -190,6 +196,7 @@ public class Movie implements Parcelable {
         this.voteAverage = voteAverage;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -197,12 +204,20 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
         dest.writeString(posterPath);
         dest.writeString(overview);
         dest.writeString(releaseDate);
+        dest.writeInt(id);
         dest.writeString(originalTitle);
         dest.writeString(originalLanguage);
         dest.writeString(title);
         dest.writeString(backdropPath);
+        dest.writeDouble(popularity);
+        dest.writeInt(voteCount);
+        dest.writeDouble(voteAverage);
+        dest.writeByte((byte) (adult ? 1 : 0));
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeList(genreIds);
     }
 }

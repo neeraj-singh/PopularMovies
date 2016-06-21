@@ -59,8 +59,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovies(Call<MovieList> movieListCall) {
-        progressDialog = ProgressDialog.show(this,null,Loader_Message);
-        progressDialog.setCancelable(true);
+        if(progressDialog==null ) {
+            progressDialog = ProgressDialog.show(this, null, Loader_Message);
+            progressDialog.setCancelable(true);
+        }
+
         movieListCall.enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(Call<MovieList> call, Response<MovieList> response) {
